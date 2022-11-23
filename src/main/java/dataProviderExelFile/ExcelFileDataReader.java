@@ -1,0 +1,56 @@
+package dataProviderExelFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.testng.annotations.DataProvider;
+
+public class ExcelFileDataReader {
+
+	@DataProvider(name= "loginData")
+	public  String[][] getData() throws Exception {
+		
+		File file = new File("./dataFile/loginData.xlsx");
+		System.out.println(file.exists());
+		
+		FileInputStream fis = new FileInputStream(file);
+		
+		XSSFWorkbook workbook = new XSSFWorkbook(fis);
+		
+		XSSFSheet sheet = workbook.getSheet("Sheet1");
+		
+		int noOfRows = sheet.getPhysicalNumberOfRows();
+		System.out.println(noOfRows);
+		
+		int noOfColumns = sheet.getRow(0).getLastCellNum();
+		System.out.println(noOfColumns);
+		
+		String[][] data = new String[noOfRows - 1][noOfColumns];
+		
+		for(int i=0; i < noOfRows - 1; i++) {
+			
+			for(int j=0; j< noOfColumns; j++) {
+				
+				DataFormatter df = new DataFormatter();
+				
+				
+				data[i][j] = df.formatCellValue(sheet.getRow(i+1).getCell(j));
+				
+				
+			}
+			System.out.println();
+		}
+		
+		
+		workbook.close();
+		fis.close();
+		return data;
+	}
+	
+	
+	
+
+}
